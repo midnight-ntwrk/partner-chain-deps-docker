@@ -31,4 +31,4 @@ graph TD;
         kupo -.-> ogmios
         kupo -.-> cardano-node
     end
-```mermaid
+```
