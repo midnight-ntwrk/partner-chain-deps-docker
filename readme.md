@@ -43,7 +43,7 @@ graph TD;
 
 ```shell
 cd partnerchain-dependencies
-docker-compose up
+docker-compose up -d
 ```
 
 🚀 That's it.
