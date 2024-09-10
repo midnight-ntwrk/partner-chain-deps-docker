@@ -3,34 +3,33 @@
 This allows easy orchestration of partnerchain dependency services.
 
 ```mermaid
-graph TD;
+graph TD
+    A[Docker Compose] -->|Contains| B[Services]
+    B --> C[cardano-node]
+    B --> D[postgres]
+    B --> E[db-sync]
+    B --> F[ogmios]
+    B --> G[kupo]
 
-    subgraph Server
-        subgraph Docker Host
-            ipc[ipc] --> cardano-data[cardano-data]
-        end
+    C -->|Uses| H[ipc Volume]
+    C -->|Uses| I[cardano-data Volume]
+    D -->|Uses| J[postgres-data Volume]
+    E -->|Uses| K[db-sync-data Volume]
+    E -->|Depends On| D
+    F -->|Uses| H
+    F -->|Uses| L[ogmios-data Volume]
+    F -->|Uses| M[config Volume]
+    G -->|Uses| H
+    G -->|Uses| N[kupo-dir Volume]
+    G -->|Uses| M
 
-        subgraph Services
-            cardano-node(cardano-node)
-            db-sync(db-sync)
-            ogmios(ogmios)
-            kupo(kupo)
-        end
-
-        ipc -.-> cardano-node
-        ipc -.-> db-sync
-        ipc -.-> ogmios
-        ipc -.-> kupo
-
-        cardano-data --> cardano-node
-        cardano-data --> db-sync
-        cardano-data --> ogmios
-
-        cardano-node -.-> db-sync
-        cardano-node -.-> ogmios
-        kupo -.-> ogmios
-        kupo -.-> cardano-node
-    end
+    H[ipc] -->|Shared Volume| O[Shared IPC]
+    I[cardano-data] -->|Data Volume| P[Cardano Data]
+    J[postgres-data] -->|Data Volume| Q[Postgres Data]
+    K[db-sync-data] -->|Data Volume| R[DB Sync Data]
+    L[ogmios-data] -->|Data Volume| S[Ogmios Data]
+    M[config] -->|Config Volume| T[Config Data]
+    N[kupo-dir] -->|Data Volume| U[Kupo Data]
 ```
 
 ## Usage
