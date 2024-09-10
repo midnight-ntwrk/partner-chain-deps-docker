@@ -32,3 +32,18 @@ graph TD;
         kupo -.-> cardano-node
     end
 ```
+
+## Usage
+
+## Starting
+
+1. Clone repo
+
+2. Navigate to .yml file and `docker-compose up`
+
+```shell
+cd partnerchain-dependencies
+docker-compose up
+```
+
+🚀 That's it.

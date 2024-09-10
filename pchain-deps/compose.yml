@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.8"
 
 volumes:
   ipc: {}
@@ -9,8 +9,9 @@ volumes:
 
 services:
   cardano-node:
-    image: ghcr.io/intersectmbo/cardano-node:8.9.3
-    container_name: partnerchains-cardano-node
+    image: ghcr.io/intersectmbo/cardano-node:9.1.0
+    network_mode: "host"
+    container_name: pchain-deps-cardano-node
     environment:
       - NETWORK=preview
       - CARDANO_NODE_SOCKET_PATH=/ipc/node.socket
@@ -20,7 +21,8 @@ services:
 
   postgres:
     image: postgres:15.3
-    container_name: partnerchains-postgres
+    shm_size: 1g
+    container_name: pchain-deps-postgres
     environment:
       - POSTGRES_PASSWORD=password123
       - POSTGRES_DB=cexplorer
@@ -35,8 +37,8 @@ services:
       retries: 5
 
   db-sync:
-    image: ghcr.io/intersectmbo/cardano-db-sync:13.1.1.3
-    container_name: partnerchains-db-sync
+    image: ghcr.io/intersectmbo/cardano-db-sync:13.3.0.0
+    container_name: pchain-deps-db-sync
     depends_on:
       postgres:
         condition: service_healthy
@@ -52,8 +54,8 @@ services:
       - db-sync-data:/var/lib
 
   ogmios:
-    image: cardanosolutions/ogmios:v5.6.0-preview
-    container_name: partnerchains-ogmios
+    image: cardanosolutions/ogmios:v6.5.0
+    container_name: pchain-deps-ogmios
     platform: linux/amd64
     command: "--host 0.0.0.0 --node-config /config/preview/config.json --node-socket /ipc/node.socket"
     environment:
@@ -64,15 +66,15 @@ services:
     volumes:
       - ipc:/ipc
       - ogmios-data:/data
-      - $CARDANO_CONFIG_DIR:/config
+      - ./config:/config
 
   kupo:
-    image: cardanosolutions/kupo:v2.2.0
-    container_name: partnerchains-kupo
-    command: "--node-socket /ipc/node.socket --node-config /config/preview/config.json --host 0.0.0.0 --workdir /db --match \"*\" --since origin"
+    image: cardanosolutions/kupo:v2.9.0
+    container_name: pchain-deps-kupo
+    command: '--node-socket /ipc/node.socket --node-config /config/preview/config.json --host 0.0.0.0 --workdir /db --match "*" --since origin'
     ports:
       - "1442:1442"
     volumes:
-      - $KUPO_WORKDIR:/db
+      - ./kupo-dir:/db
       - ipc:/ipc
-      - $CARDANO_CONFIG_DIR:/config
+      - ./config:/config
