@@ -35,8 +35,6 @@ graph TD;
 
 ## Usage
 
-## Starting
-
 1. Clone repo
 
 2. Navigate to .yml file and `docker-compose up`
