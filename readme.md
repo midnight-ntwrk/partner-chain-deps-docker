@@ -39,7 +39,7 @@ graph TD
 2. Navigate to .yml file and `docker-compose up`
 
 ```shell
-cd partnerchain-dependencies
+cd pchain-deps
 docker-compose up -d
 ```
 
