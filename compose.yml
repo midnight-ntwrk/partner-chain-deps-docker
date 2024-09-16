@@ -1,0 +1,119 @@
+
+#matches partner chains requirements: https://github.com/input-output-hk/partner-chains/releases/tag/v1.0.0
+
+volumes:
+  cardano-data: {} # a few issue led me to the decision to keep manage is data myself but feel free to put this as cardano data volume
+  node-ipc: {}
+  db-sync-data: {}
+  postgres-data: {}
+  ogmios-data: {}
+  kupo-data: {}
+  # midnight-data-testnet: {}
+
+services:
+  cardano-node:
+    image: ghcr.io/intersectmbo/cardano-node:9.1.0
+    restart: unless-stopped
+    container_name: cardano-node
+    ports:
+      - "3001:3001"
+    environment:
+      - NETWORK=preview
+      - CARDANO_NODE_SOCKET_PATH=/ipc/node.socket
+    volumes:
+      - node-ipc:/ipc
+      - $CARDANO_DATA_DIR:/data # replace with cardano-data if desired
+
+  postgres:
+    image: postgres:15.3
+    container_name: db-sync-postgres
+    environment:
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=cexplorer
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  db-sync:
+    image: ghcr.io/intersectmbo/cardano-db-sync:13.3.0.0
+    container_name: db-sync
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - NETWORK=preview
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=cexplorer
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password123
+    volumes:
+      - node-ipc:/node-ipc
+      - db-sync-data:/var/lib
+
+  ogmios:
+    image: cardanosolutions/ogmios:v6.5.0
+    container_name: ogmios
+    restart: unless-stopped
+    environment:
+      - DATA_DIR=/data
+    ports:
+      - "1337:1337"
+    volumes:
+      - node-ipc:/ipc
+      - ogmios-data:/data
+    command:
+      - --node-socket
+      - /ipc/node.socket
+      - --node-config
+      - /config/preview/cardano-node/config.json
+      - --host
+      - 0.0.0.0
+
+  kupo: # http://localhost:1442/health to validate its working
+    image: cardanosolutions/kupo:v2.9.0
+    container_name: kupo
+    command: 
+      - --node-socket
+      - /ipc/node.socket
+      - --node-config
+      - /config/preview/cardano-node/config.json
+      - --host
+      - 0.0.0.0
+      - --workdir
+      - /db
+      - --match 
+      - "*"
+      - --since
+      - "54412148.656e903c510441032ad566d26fecf7be98882bdefde6a1ed961cd8e7bfa9d18a"
+      # using '--since origin' is a better default option but slow
+    ports:
+      - "1442:1442"
+    volumes:
+      - kupo-data:/db
+      - node-ipc:/ipc
+      - $CARDANO_CONFIG_DIR:/config
+
+
+# IF testnet network is USE_MAIN_CHAIN_FOLLOWER_MOCK=true, there is no need to run sidechain dependancies
+  # midnight-node-testnet:
+  #   image: ghcr.io/midnight-ntwrk/midnight-node:0.6.1-fbf07664
+  #   platform: linux/amd64
+  #   ports:
+  #     - "9944:9944"
+  #     - "30333:30333"
+  #   env_file:
+  #     - .env
+  #   healthcheck:
+  #     test: [ "CMD", "curl", "-f", "http://localhost:9933/health" ]
+  #     interval: 2s
+  #   volumes:
+      #- ./:/mn-src # do this while troublehshooting to save time wiping volume
+      # - midnight-data-testnet:/mn-src

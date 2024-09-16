@@ -1,45 +1,20 @@
-# Partnerchain Dependencies Docker
+# Partner-chain Dependencies Docker
 
-This allows easy orchestration of partnerchain dependency services.
+This allows easy orchestration of partner-chain dependency services.
 
-```mermaid
-graph TD
-    A[Docker Compose] -->|Contains| B[Services]
-    B --> C[cardano-node]
-    B --> D[postgres]
-    B --> E[db-sync]
-    B --> F[ogmios]
-    B --> G[kupo]
+## System requirements
 
-    C -->|Uses| H[ipc Volume]
-    C -->|Uses| I[cardano-data Volume]
-    D -->|Uses| J[postgres-data Volume]
-    E -->|Uses| K[db-sync-data Volume]
-    E -->|Depends On| D
-    F -->|Uses| H
-    F -->|Uses| L[ogmios-data Volume]
-    F -->|Uses| M[config Volume]
-    G -->|Uses| H
-    G -->|Uses| N[kupo-dir Volume]
-    G -->|Uses| M
-
-    H[ipc] -->|Shared Volume| O[Shared IPC]
-    I[cardano-data] -->|Data Volume| P[Cardano Data]
-    J[postgres-data] -->|Data Volume| Q[Postgres Data]
-    K[db-sync-data] -->|Data Volume| R[DB Sync Data]
-    L[ogmios-data] -->|Data Volume| S[Ogmios Data]
-    M[config] -->|Config Volume| T[Config Data]
-    N[kupo-dir] -->|Data Volume| U[Kupo Data]
-```
+- Install [Docker-Compose](https://docs.docker.com/compose/install/)
 
 ## Usage
 
 1. Clone repo
 
+3. Modify paths in `.env` file if desired 
+
 2. Navigate to .yml file and `docker-compose up`
 
 ```shell
-cd pchain-deps
 docker-compose up -d
 ```
 
