@@ -79,7 +79,7 @@ services:
       - --node-socket
       - /ipc/node.socket
       - --node-config
-      - /config/preview/cardano-node/config.json
+      - /config/config.json
       - --host
       - 0.0.0.0
       - --workdir
