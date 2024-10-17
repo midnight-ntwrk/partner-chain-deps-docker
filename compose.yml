@@ -20,7 +20,7 @@ services:
       - $CARDANO_DATA_DIR:/data
 
   postgres:
-    image: postgres:15.3
+    image: postgres:15.5
     container_name: db-sync-postgres
     environment:
       - POSTGRES_PASSWORD=password123
