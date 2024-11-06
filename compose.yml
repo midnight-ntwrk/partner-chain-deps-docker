@@ -7,7 +7,7 @@ volumes:
 
 services:
   cardano-node:
-    image: ghcr.io/intersectmbo/cardano-node:9.1.0
+    image: ghcr.io/intersectmbo/cardano-node:10.1.2
     restart: unless-stopped
     container_name: cardano-node
     ports:
@@ -54,7 +54,7 @@ services:
       - db-sync-data:/var/lib
 
   ogmios:
-    image: cardanosolutions/ogmios:v6.5.0
+    image: cardanosolutions/ogmios:v6.8.0
     container_name: ogmios
     restart: unless-stopped
     environment:
