@@ -75,22 +75,22 @@ services:
   kupo:
     image: cardanosolutions/kupo:v2.9.0
     container_name: kupo
-    command: 
-      - --node-socket
-      - /ipc/node.socket
-      - --node-config
-      - /config/preview/cardano-node/config.json
-      - --host
-      - 0.0.0.0
+    command:
+      - --ogmios-host
+      - ogmios  # Assuming 'ogmios' is the service name in your docker-compose network
+      - --ogmios-port
+      - "1337"
       - --workdir
       - /db
-      - --match 
+      - --match
       - "*"
       - --since
-      - "54412148.656e903c510441032ad566d26fecf7be98882bdefde6a1ed961cd8e7bfa9d18a"
+      - "origin"
     ports:
       - "1442:1442"
     volumes:
       - kupo-data:/db
       - ${HOME_IPC}:/ipc  # Use ${HOME_IPC} from .env
-      - $CARDANO_CONFIG_DIR:/config
+      - ./cardano-config/preview:/config/preview
+    depends_on:
+      - ogmios  # Ensure Ogmios starts before Kupo
