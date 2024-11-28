@@ -20,7 +20,7 @@ services:
       - $CARDANO_DATA_DIR:/data
 
   postgres:
-    image: postgres:15.5
+    image: postgres:15.3
     container_name: db-sync-postgres
     environment:
       - POSTGRES_PASSWORD=password123
@@ -54,7 +54,7 @@ services:
       - db-sync-data:/var/lib
 
   ogmios:
-    image: cardanosolutions/ogmios:v6.8.0
+    image: cardanosolutions/ogmios:v6.9.0
     container_name: ogmios
     restart: unless-stopped
     environment:
