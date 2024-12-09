@@ -23,7 +23,7 @@ services:
     image: postgres:15.3
     container_name: db-sync-postgres
     environment:
-      - POSTGRES_PASSWORD=password123
+      - POSTGRES_PASSWORD=4sJHMjjEAGEi
       - POSTGRES_DB=cexplorer
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -48,7 +48,7 @@ services:
       - POSTGRES_PORT=5432
       - POSTGRES_DB=cexplorer
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password123
+      - POSTGRES_PASSWORD=4sJHMjjEAGEi
     volumes:
       - ${HOME_IPC}:/node-ipc  # Use ${HOME_IPC} from .env
       - db-sync-data:/var/lib
