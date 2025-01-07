@@ -1,5 +1,10 @@
 # Partner-chain Dependencies Docker
 
+*This repo has been merged into
+https://github.com/midnight-ntwrk/midnight-node-docker and is now archived.*
+
+## Old:
+
 This allows easy orchestration of partner-chain dependency services.
 
 ## System requirements
@@ -19,3 +24,8 @@ docker-compose up -d
 ```
 
 🚀 That's it.
+
+## Repo Archived
+
+*This repo has been merged into
+https://github.com/midnight-ntwrk/midnight-node-docker and is now archived.*
